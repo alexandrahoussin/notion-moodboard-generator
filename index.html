@@ -13,103 +13,62 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #ffffff; /* Suppression du violet */
             color: #2d3748;
-            padding: 20px;
+            padding: 10px;
             min-height: 100vh;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 100%;
             margin: 0 auto;
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
         }
 
         .header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 15px;
         }
 
         .header h1 {
-            font-size: 2.5rem;
+            font-size: 1.6rem;
             color: #2d3748;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             font-weight: 700;
         }
 
         .header p {
             color: #718096;
-            font-size: 1.1rem;
+            font-size: 1rem;
         }
 
         .controls {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .upload-section {
-            border: 3px dashed #cbd5e0;
-            border-radius: 15px;
-            padding: 40px;
-            text-align: center;
-            background: #f7fafc;
-            cursor: pointer;
-            transition: all 0.3s ease;
             margin-bottom: 20px;
-        }
-
-        .upload-section:hover {
-            border-color: #667eea;
-            background: #edf2f7;
-        }
-
-        .upload-section.dragover {
-            border-color: #667eea;
-            background: #e6fffa;
-        }
-
-        .upload-icon {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            color: #a0aec0;
-        }
-
-        .upload-text {
-            color: #4a5568;
-            font-size: 1.1rem;
-            margin-bottom: 10px;
-        }
-
-        .upload-hint {
-            color: #718096;
-            font-size: 0.9rem;
         }
 
         .layout-selector {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
+            grid-template-columns: repeat(2, 1fr); /* 2 colonnes */
+            gap: 10px;
         }
 
         .layout-btn {
             background: white;
             border: 2px solid #e2e8f0;
             border-radius: 12px;
-            padding: 15px;
+            padding: 10px;
             cursor: pointer;
             text-align: center;
             transition: all 0.3s ease;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #4a5568;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
         }
 
         .layout-btn:hover, .layout-btn.active {
@@ -118,60 +77,52 @@
             color: white;
         }
 
-        .layout-preview {
-            width: 40px;
-            height: 30px;
-            background: #e2e8f0;
-            margin: 0 auto 8px;
-            border-radius: 4px;
-            position: relative;
+        .layout-icon {
+            width: 24px;
+            height: 24px;
         }
 
         .moodboard-canvas {
             background: white;
-            border-radius: 15px;
-            min-height: 600px;
-            margin-bottom: 20px;
+            border-radius: 12px;
+            min-height: 400px; /* Plus petit pour Notion */
+            max-height: 500px;
+            margin-bottom: 15px;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
         }
 
         .image-item {
             position: absolute;
             cursor: move;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border-radius: 6px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
             transition: transform 0.2s ease;
-        }
-
-        .image-item:hover {
-            transform: scale(1.02);
-            z-index: 10;
         }
 
         .image-item img {
             width: 100%;
             height: 100%;
             object-fit: contain;
-            border-radius: 8px;
+            border-radius: 6px;
             background: white;
         }
 
         .image-controls {
             position: absolute;
-            top: -10px;
-            right: -10px;
+            top: -8px;
+            right: -8px;
             background: #667eea;
             color: white;
             border-radius: 50%;
-            width: 25px;
-            height: 25px;
+            width: 22px;
+            height: 22px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             opacity: 0;
             transition: opacity 0.2s ease;
         }
@@ -182,7 +133,7 @@
 
         .actions {
             display: flex;
-            gap: 15px;
+            gap: 10px;
             justify-content: center;
             flex-wrap: wrap;
         }
@@ -191,15 +142,15 @@
             background: #667eea;
             color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 10px;
+            padding: 8px 16px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 0.9rem;
             font-weight: 500;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .btn:hover {
@@ -215,18 +166,39 @@
             background: #4a5568;
         }
 
+        .upload-section {
+            border: 2px dashed #cbd5e0;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            background: #f7fafc;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+
+        .upload-section:hover {
+            border-color: #667eea;
+            background: #edf2f7;
+        }
+
+        .upload-icon {
+            width: 28px;
+            height: 28px;
+            margin-bottom: 8px;
+        }
+
         .preview-images {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 8px;
+            margin-bottom: 15px;
             overflow-x: auto;
-            padding: 10px 0;
+            padding: 5px 0;
         }
 
         .preview-item {
-            min-width: 80px;
-            height: 60px;
-            border-radius: 8px;
+            min-width: 60px;
+            height: 45px;
+            border-radius: 6px;
             overflow: hidden;
             cursor: pointer;
             position: relative;
@@ -237,12 +209,6 @@
             border-color: #667eea;
         }
 
-        .preview-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
         .remove-preview {
             position: absolute;
             top: 2px;
@@ -250,84 +216,13 @@
             background: rgba(239, 68, 68, 0.8);
             color: white;
             border-radius: 50%;
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-size: 0.7rem;
-        }
-
-        .export-options {
-            background: #f7fafc;
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 20px;
-        }
-
-        .export-title {
-            font-weight: 600;
-            margin-bottom: 15px;
-            color: #2d3748;
-        }
-
-        .export-formats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 10px;
-        }
-
-        .format-btn {
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 10px 15px;
-            cursor: pointer;
-            text-align: center;
-            font-size: 0.9rem;
-            transition: all 0.2s ease;
-        }
-
-        .format-btn:hover {
-            border-color: #667eea;
-            background: #f0f4ff;
-        }
-
-        input[type="file"] {
-            display: none;
-        }
-
-        .generated-code {
-            background: #2d3748;
-            color: #e2e8f0;
-            padding: 15px;
-            border-radius: 8px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.8rem;
-            margin-top: 15px;
-            white-space: pre-wrap;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 20px;
-                margin: 10px;
-            }
-            
-            .controls {
-                flex-direction: column;
-            }
-            
-            .layout-selector {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .actions {
-                flex-direction: column;
-            }
+            font-size: 0.65rem;
         }
     </style>
 </head>
@@ -335,74 +230,56 @@
     <div class="container">
         <div class="header">
             <h1>🎨 Mood Board Generator</h1>
-            <p>Créez votre planche d'inspiration couture en quelques clics</p>
+            <p>Créez votre planche d'inspiration couture</p>
         </div>
 
         <!-- Section Upload -->
-        <div class="upload-section" onclick="document.getElementById('fileInput').click()" ondrop="dropHandler(event)" ondragover="dragOverHandler(event)" ondragleave="dragLeaveHandler(event)">
-            <div class="upload-icon">📸</div>
-            <div class="upload-text">Glissez vos images ici ou cliquez pour sélectionner</div>
-            <div class="upload-hint">JPG, PNG, WebP - Max 5MB par image</div>
+        <div class="upload-section" onclick="document.getElementById('fileInput').click()" 
+             ondrop="dropHandler(event)" 
+             ondragover="dragOverHandler(event)" 
+             ondragleave="dragLeaveHandler(event)">
+            <img src="upload-icon.svg" alt="Upload" class="upload-icon">
+            <div class="upload-text">Glissez vos images ici ou cliquez</div>
             <input type="file" id="fileInput" multiple accept="image/*" onchange="fileChangeHandler(this.files)">
         </div>
 
-        <!-- Aperçu des images uploadées -->
+        <!-- Aperçu -->
         <div class="preview-images" id="previewImages"></div>
 
-        <!-- Sélection de layout -->
+        <!-- Layout -->
         <div class="controls">
-            <div>
-                <h3 style="margin-bottom: 10px; color: #4a5568;">Choisissez un style :</h3>
-                <div class="layout-selector">
-                    <div class="layout-btn active" onclick="selectLayout('pinterest')">
-                        <div class="layout-preview"></div>
-                        Pinterest
-                    </div>
-                    <div class="layout-btn" onclick="selectLayout('grid')">
-                        <div class="layout-preview"></div>
-                        Grille
-                    </div>
-                    <div class="layout-btn" onclick="selectLayout('collage')">
-                        <div class="layout-preview"></div>
-                        Collage
-                    </div>
-                    <div class="layout-btn" onclick="selectLayout('minimal')">
-                        <div class="layout-preview"></div>
-                        Minimal
-                    </div>
+            <div class="layout-selector">
+                <div class="layout-btn active" onclick="selectLayout(event,'pinterest')">
+                    <img src="pinterest-icon.svg" class="layout-icon" alt="Pinterest">
+                    Pinterest
+                </div>
+                <div class="layout-btn" onclick="selectLayout(event,'grid')">
+                    <img src="grid-icon.svg" class="layout-icon" alt="Grid">
+                    Grille
+                </div>
+                <div class="layout-btn" onclick="selectLayout(event,'collage')">
+                    <img src="collage-icon.svg" class="layout-icon" alt="Collage">
+                    Collage
+                </div>
+                <div class="layout-btn" onclick="selectLayout(event,'minimal')">
+                    <img src="minimal-icon.svg" class="layout-icon" alt="Minimal">
+                    Minimal
                 </div>
             </div>
         </div>
 
-        <!-- Canvas du mood board -->
+        <!-- Canvas -->
         <div class="moodboard-canvas" id="moodboardCanvas">
-            <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #a0aec0; font-size: 1.2rem;">
+            <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#a0aec0;font-size:1rem;">
                 Votre mood board apparaîtra ici
             </div>
         </div>
 
         <!-- Actions -->
         <div class="actions">
-            <button class="btn" onclick="generateMoodboard()">
-                ✨ Générer le Mood Board
-            </button>
-            <button class="btn btn-secondary" onclick="shuffleLayout()">
-                🔄 Mélanger
-            </button>
-            <button class="btn btn-secondary" onclick="clearCanvas()">
-                🗑️ Vider
-            </button>
-        </div>
-
-        <!-- Options d'export -->
-        <div class="export-options">
-            <div class="export-title">💾 Exporter votre Mood Board</div>
-            <div class="export-formats">
-                <div class="format-btn" onclick="exportAsImage()">
-                    📷 Télécharger en PNG
-                </div>
-            </div>
-            <div id="exportResult"></div>
+            <button class="btn" onclick="generateMoodboard()">✨ Générer</button>
+            <button class="btn btn-secondary" onclick="shuffleLayout()">🔄 Mélanger</button>
+            <button class="btn btn-secondary" onclick="clearCanvas()">🗑️ Vider</button>
         </div>
     </div>
 
@@ -415,23 +292,18 @@
             e.preventDefault();
             e.currentTarget.classList.add('dragover');
         }
-
         function dragLeaveHandler(e) {
             e.currentTarget.classList.remove('dragover');
         }
-
         function dropHandler(e) {
             e.preventDefault();
             e.currentTarget.classList.remove('dragover');
-            const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('image/'));
+            const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
             processFiles(files);
         }
-
         function fileChangeHandler(files) {
             processFiles(Array.from(files));
         }
-
-        function processFiles(files) {
         function processFiles(files) {
             files.forEach(file => {
                 if (file.type.startsWith('image/') && file.size <= 5 * 1024 * 1024) {
@@ -449,7 +321,6 @@
                 }
             });
         }
-
         function updatePreview() {
             const container = document.getElementById('previewImages');
             container.innerHTML = uploadedImages.map(img => `
@@ -459,228 +330,23 @@
                 </div>
             `).join('');
         }
-
         function removeImage(id) {
             uploadedImages = uploadedImages.filter(img => img.id != id);
             updatePreview();
         }
-
-        function selectLayout(layout) {
+        function selectLayout(e, layout) {
             currentLayout = layout;
             document.querySelectorAll('.layout-btn').forEach(btn => btn.classList.remove('active'));
-            event.currentTarget.classList.add('active');
+            e.currentTarget.classList.add('active');
         }
-
-        function generateMoodboard() {
-            if (uploadedImages.length === 0) {
-                alert('Veuillez d\'abord ajouter des images !');
-                return;
-            }
-
-            const canvas = document.getElementById('moodboardCanvas');
-            const canvasWidth = canvas.offsetWidth;
-            const canvasHeight = 600;
-
-            // Nettoyer le canvas
-            canvas.innerHTML = '';
-            moodboardItems = [];
-
-            // Générer les positions selon le layout
-            const positions = generateLayout(uploadedImages.length, canvasWidth, canvasHeight);
-
-            uploadedImages.forEach((img, index) => {
-                if (positions[index]) {
-                    const item = createMoodboardItem(img, positions[index]);
-                    canvas.appendChild(item);
-                    moodboardItems.push(item);
-                }
-            });
-        }
-
-        function generateLayout(imageCount, width, height) {
-            const positions = [];
-            const margin = 20;
-
-            switch (currentLayout) {
-                case 'grid':
-                    const cols = Math.ceil(Math.sqrt(imageCount));
-                    const itemWidth = (width - margin * (cols + 1)) / cols;
-                    const itemHeight = itemWidth * 0.75;
-                    
-                    for (let i = 0; i < imageCount; i++) {
-                        const row = Math.floor(i / cols);
-                        const col = i % cols;
-                        positions.push({
-                            x: margin + col * (itemWidth + margin),
-                            y: margin + row * (itemHeight + margin),
-                            width: itemWidth,
-                            height: itemHeight
-                        });
-                    }
-                    break;
-
-                case 'pinterest':
-                    const pCols = 3;
-                    const pItemWidth = (width - margin * (pCols + 1)) / pCols;
-                    const colHeights = new Array(pCols).fill(margin);
-                    
-                    for (let i = 0; i < imageCount; i++) {
-                        const shortestCol = colHeights.indexOf(Math.min(...colHeights));
-                        const randomHeight = pItemWidth * (0.6 + Math.random() * 0.8);
-                        
-                        positions.push({
-                            x: margin + shortestCol * (pItemWidth + margin),
-                            y: colHeights[shortestCol],
-                            width: pItemWidth,
-                            height: randomHeight
-                        });
-                        
-                        colHeights[shortestCol] += randomHeight + margin;
-                    }
-                    break;
-
-                case 'collage':
-                    const placedItems = [];
-                    for (let i = 0; i < imageCount; i++) {
-                        const size = 100 + Math.random() * 150;
-                        let attempts = 0;
-                        let position;
-                        
-                        do {
-                            position = {
-                                x: Math.random() * (width - size - 40) + 20,
-                                y: Math.random() * (height - size - 40) + 20,
-                                width: size,
-                                height: size * (0.7 + Math.random() * 0.6),
-                                rotation: (Math.random() - 0.5) * 20
-                            };
-                            attempts++;
-                        } while (attempts < 50 && checkOverlap(position, placedItems));
-                        
-                        positions.push(position);
-                        placedItems.push(position);
-                    }
-                    break;
-
-                case 'minimal':
-                    const mItemWidth = Math.min(200, (width - 100) / 2);
-                    const spacing = 60;
-                    
-                    for (let i = 0; i < Math.min(imageCount, 6); i++) {
-                        const row = Math.floor(i / 2);
-                        const col = i % 2;
-                        positions.push({
-                            x: (width - mItemWidth * 2 - spacing) / 2 + col * (mItemWidth + spacing),
-                            y: 50 + row * (mItemWidth + spacing),
-                            width: mItemWidth,
-                            height: mItemWidth * 0.8
-                        });
-                    }
-                    break;
-            }
-
-            return positions;
-        }
-
-        // Fonction pour vérifier les chevauchements
-        function checkOverlap(newItem, existingItems) {
-            const margin = 15;
-            
-            for (let item of existingItems) {
-                if (newItem.x < item.x + item.width + margin &&
-                    newItem.x + newItem.width + margin > item.x &&
-                    newItem.y < item.y + item.height + margin &&
-                    newItem.y + newItem.height + margin > item.y) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        function createMoodboardItem(imageData, position) {
-            const item = document.createElement('div');
-            item.className = 'image-item';
-            item.style.left = position.x + 'px';
-            item.style.top = position.y + 'px';
-            item.style.width = position.width + 'px';
-            item.style.height = position.height + 'px';
-            
-            if (position.rotation) {
-                item.style.transform = `rotate(${position.rotation}deg)`;
-            }
-
-            item.innerHTML = `
-                <img src="${imageData.src}" alt="${imageData.name}">
-                <div class="image-controls" onclick="removeFromCanvas('${imageData.id}')">×</div>
-            `;
-
-            return item;
-        }
-
-        // Fonction pour vérifier les chevauchements
-        function isOverlapping(newItem, existingItems) {
-            const margin = 15; // Marge minimum entre les éléments
-            
-            for (let item of existingItems) {
-                if (newItem.x < item.x + item.width + margin &&
-                    newItem.x + newItem.width + margin > item.x &&
-                    newItem.y < item.y + item.height + margin &&
-                    newItem.y + newItem.height + margin > item.y) {
-                    return true;
-                }
-            }
-            return false;
-        }
-            generateMoodboard();
-        }
-
-        function shuffleLayout() {
+        function clearCanvas() {
             document.getElementById('moodboardCanvas').innerHTML = `
-                <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #a0aec0; font-size: 1.2rem;">
+                <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#a0aec0;font-size:1rem;">
                     Votre mood board apparaîtra ici
                 </div>
             `;
             moodboardItems = [];
         }
-
-        function exportAsImage() {
-            const canvas = document.getElementById('moodboardCanvas');
-            
-            if (moodboardItems.length === 0) {
-                alert('Générez d\'abord un mood board avant de l\'exporter !');
-                return;
-            }
-
-            // Utiliser html2canvas pour capturer le canvas
-            // Note: En environnement réel, il faudrait inclure la librairie html2canvas
-            // Pour cette démo, on simule le téléchargement
-            
-            const result = document.getElementById('exportResult');
-            result.innerHTML = `
-                <div style="margin-top: 15px; padding: 20px; background: #e6fffa; border-radius: 8px; color: #234e52; line-height: 1.6;">
-                    ✅ <strong>Mood Board prêt à télécharger !</strong><br><br>
-                    
-                    <em>💡 Dans la version finale :</em><br>
-                    • L'image PNG sera automatiquement téléchargée<br>
-                    • Résolution haute qualité (300 DPI)<br>
-                    • Parfait pour impression ou upload dans Notion<br><br>
-                    
-                    <strong>Pour l'instant :</strong> Faites une capture d'écran du mood board ci-dessus !<br>
-                    <em>Sur PC : Windows + Shift + S</em><br>
-                    <em>Sur Mac : Cmd + Shift + 4</em>
-                </div>
-            `;
-
-            // Animation de confirmation
-            canvas.style.border = '3px solid #38a169';
-            setTimeout(() => {
-                canvas.style.border = 'none';
-            }, 2000);
-        }
-
-
-
-
     </script>
 </body>
 </html>
