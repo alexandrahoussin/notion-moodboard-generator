@@ -1,556 +1,344 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Mood Board Generator — Notion friendly</title>
+<meta charset="utf-8">
+<title>Moodboard Generator</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-    background:#fff; /* fond blanc demandé */
-    color:#2d3748;
-    padding:10px;
+  body {
+    font-family: sans-serif;
+    background: #7f5af0;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
   }
-
-  .container{
-    width:100%;
-    max-width:920px;
-    margin:0 auto;
-    background:rgba(255,255,255,1);
-    border-radius:14px;
-    padding:14px;
-    box-shadow:0 8px 22px rgba(0,0,0,0.06);
+  .container {
+    background: #fff;
+    border-radius: 20px;
+    padding: 20px;
+    max-width: 1000px;
+    width: 100%;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
   }
-
-  .header{ text-align:center; margin-bottom:12px }
-  .header h1{ font-size:1.2rem; font-weight:700 }
-  .header p{ color:#718096; font-size:0.95rem }
-
-  .upload-section{
-    border:2px dashed #cbd5e0;
-    border-radius:10px;
-    padding:12px;
-    text-align:center;
-    background:#f7fafc;
-    cursor:pointer;
-    margin-bottom:12px;
+  h1 {
+    text-align: center;
+    margin-bottom: 10px;
   }
-  .upload-section:hover{ border-color:#667eea; background:#edf2f7 }
-
-  .upload-icon{ width:28px;height:28px;display:inline-block;margin-bottom:6px }
-
-  .preview-images{
-    display:flex;
-    gap:8px;
-    overflow-x:auto;
-    padding:6px 0;
-    margin-bottom:12px;
+  .upload {
+    border: 2px dashed #ccc;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 10px;
+    margin-bottom: 20px;
   }
-  .preview-item{
-    min-width:64px;
-    height:48px;
-    border-radius:8px;
-    overflow:hidden;
-    position:relative;
-    border:2px solid transparent;
-    cursor:pointer;
+  .preview-images {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    margin-bottom: 20px;
   }
-  .preview-item img{ width:100%;height:100%;object-fit:cover;display:block }
-  .remove-preview{
-    position:absolute; top:4px; right:4px;
-    width:18px; height:18px; border-radius:50%;
-    background:rgba(239,68,68,0.85); color:#fff; display:flex;
-    align-items:center; justify-content:center; font-size:12px; cursor:pointer;
+  .preview-item {
+    position: relative;
+    min-width: 80px;
+    height: 60px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 2px solid transparent;
+    cursor: pointer;
   }
-
-  .controls{ margin-bottom:12px }
-  .layout-selector{
-    display:grid;
-    grid-template-columns: repeat(2, minmax(0,1fr)); /* 2 colonnes */
-    gap:10px;
+  .preview-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
-  .layout-btn{
-    display:flex; flex-direction:column; align-items:center; gap:6px;
-    padding:10px; background:#fff; border:2px solid #e2e8f0; border-radius:10px;
-    cursor:pointer; transition:all .18s; color:#4a5568; font-size:0.88rem;
+  .remove-preview {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: rgba(239,68,68,0.9);
+    color: #fff;
+    font-size: 12px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
   }
-  .layout-btn.active{ background:#667eea; border-color:#667eea; color:white }
-  .layout-btn:hover{ transform:translateY(-3px) }
-
-  .layout-icon{ width:22px; height:22px; display:block }
-
-  .icon-import-row{ display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; align-items:center; justify-content:flex-start }
-  .icon-import-btn{
-    font-size:0.75rem; padding:6px 8px; border-radius:8px; border:1px solid #e2e8f0; background:#fff; cursor:pointer;
+  .layout-selector {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 colonnes */
+    gap: 10px;
+    margin-bottom: 20px;
   }
-
-  .moodboard-canvas{
-    background:#fff; border-radius:10px; margin-top:12px; margin-bottom:12px;
-    overflow:hidden; position:relative;
-    /* taille adaptative pour Notion - compacte mais responsive */
-    height: min(52vh, 480px);
-    min-height: 280px;
-    border:1px solid rgba(0,0,0,0.03);
+  .layout-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 10px;
+    background: #fff;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all .18s;
+    color: #4a5568;
+    font-size: 0.9rem;
   }
-
-  .image-item{
-    position:absolute; cursor:grab; border-radius:8px; overflow:hidden;
-    box-shadow:0 6px 14px rgba(0,0,0,0.12); transition:transform .12s;
+  .layout-btn.active {
+    background: #7f5af0;
+    border-color: #7f5af0;
+    color: white;
   }
-  .image-item:hover{ transform:scale(1.02) }
-
-  .image-item img{ width:100%; height:100%; object-fit:cover; display:block }
-
-  .image-controls{
-    position:absolute; top:-8px; right:-8px; width:22px; height:22px; border-radius:50%;
-    background:#667eea; color:#fff; display:flex; align-items:center; justify-content:center;
-    font-size:13px; cursor:pointer; opacity:0; transition:opacity .12s;
+  .moodboard-canvas {
+    background: #f8fafc;
+    border-radius: 12px;
+    position: relative;
+    height: 500px;
+    overflow: hidden;
+    margin-bottom: 20px;
   }
-  .image-item:hover .image-controls{ opacity:1 }
-
-  .actions{ display:flex; gap:8px; justify-content:center; margin-top:6px; flex-wrap:wrap }
-  .btn{ padding:8px 12px; border-radius:8px; background:#667eea; color:#fff; border:none; cursor:pointer; font-weight:600 }
-  .btn-secondary{ background:#718096 }
-
-  /* petits écrans (Notion narrow) : garde 2 colonnes mais réduit les gaps */
-  @media (max-width:420px){
-    .layout-selector{ gap:8px }
-    .layout-btn{ padding:8px; font-size:0.82rem }
+  .image-item {
+    position: absolute;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+  }
+  .image-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .image-controls {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #7f5af0;
+    color: #fff;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    cursor: pointer;
+    opacity: 0;
+  }
+  .image-item:hover .image-controls {
+    opacity: 1;
+  }
+  .actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 10px 16px;
+    border-radius: 8px;
+    background: #7f5af0;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .btn-secondary {
+    background: #718096;
   }
 </style>
 </head>
 <body>
   <div class="container">
-    <div class="header">
-      <h1>🎨 Mood Board Generator</h1>
-      <p>Créez votre planche d'inspiration couture — compacte pour Notion</p>
-    </div>
+    <h1>🎨 Moodboard Generator</h1>
 
-    <!-- upload -->
-    <div class="upload-section" id="uploadSection" onclick="document.getElementById('fileInput').click()"
+    <!-- Upload -->
+    <div class="upload" onclick="document.getElementById('fileInput').click()"
          ondrop="dropHandler(event)" ondragover="dragOverHandler(event)" ondragleave="dragLeaveHandler(event)">
-      <div class="upload-icon">📸</div>
-      <div style="font-size:0.95rem;margin-top:6px">Glissez vos images ici ou cliquez pour sélectionner</div>
-      <div style="font-size:0.82rem;color:#718096;margin-top:6px">JPG, PNG, WebP — max 5MB / image</div>
-      <input id="fileInput" type="file" accept="image/*" multiple style="display:none" onchange="fileChangeHandler(this.files)">
+      Cliquez ou déposez vos images ici
+      <input id="fileInput" type="file" accept="image/*" multiple style="display:none"
+             onchange="fileChangeHandler(this.files)">
     </div>
 
-    <!-- preview -->
-    <div id="previewImages" class="preview-images" aria-hidden="false"></div>
+    <!-- Preview -->
+    <div id="previewImages" class="preview-images"></div>
 
-    <!-- layouts -->
-    <div class="controls">
-      <div style="margin-bottom:8px;color:#4a5568;font-weight:600">Choisissez un style</div>
-      <div class="layout-selector">
-        <div class="layout-btn active" onclick="selectLayout(this,'pinterest')" data-layout="pinterest">
-          <img id="icon-pinterest" src="" alt="pinterest" class="layout-icon" />
-          Pinterest
-        </div>
-        <div class="layout-btn" onclick="selectLayout(this,'grid')" data-layout="grid">
-          <img id="icon-grid" src="" alt="grille" class="layout-icon" />
-          Grille
-        </div>
-        <div class="layout-btn" onclick="selectLayout(this,'collage')" data-layout="collage">
-          <img id="icon-collage" src="" alt="collage" class="layout-icon" />
-          Collage
-        </div>
-        <div class="layout-btn" onclick="selectLayout(this,'minimal')" data-layout="minimal">
-          <img id="icon-minimal" src="" alt="minimal" class="layout-icon" />
-          Minimal
-        </div>
-      </div>
-
-      <!-- import icons (discret) -->
-      <div class="icon-import-row" style="margin-top:8px">
-        <label class="icon-import-btn">Importer icône Upload
-          <input type="file" accept=".svg,image/svg+xml" onchange="handleIconUpload(event,'icon-upload')" style="display:none">
-        </label>
-        <label class="icon-import-btn">Importer Pinterest
-          <input type="file" accept=".svg,image/svg+xml" onchange="handleIconUpload(event,'icon-pinterest')" style="display:none">
-        </label>
-        <label class="icon-import-btn">Importer Grille
-          <input type="file" accept=".svg,image/svg+xml" onchange="handleIconUpload(event,'icon-grid')" style="display:none">
-        </label>
-        <label class="icon-import-btn">Importer Collage
-          <input type="file" accept=".svg,image/svg+xml" onchange="handleIconUpload(event,'icon-collage')" style="display:none">
-        </label>
-        <label class="icon-import-btn">Importer Minimal
-          <input type="file" accept=".svg,image/svg+xml" onchange="handleIconUpload(event,'icon-minimal')" style="display:none">
-        </label>
-      </div>
+    <!-- Layouts -->
+    <div class="layout-selector">
+      <div class="layout-btn active" onclick="selectLayout(this,'pinterest')">Pinterest</div>
+      <div class="layout-btn" onclick="selectLayout(this,'grid')">Grille</div>
+      <div class="layout-btn" onclick="selectLayout(this,'collage')">Collage</div>
+      <div class="layout-btn" onclick="selectLayout(this,'minimal')">Minimal</div>
     </div>
 
-    <!-- canvas -->
+    <!-- Canvas -->
     <div id="moodboardCanvas" class="moodboard-canvas">
       <div id="canvasPlaceholder" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#a0aec0">
         Votre mood board apparaîtra ici
       </div>
     </div>
 
-    <!-- actions -->
-    <div class="actions" style="margin-bottom:6px">
+    <!-- Actions -->
+    <div class="actions">
       <button class="btn" onclick="generateMoodboard()">✨ Générer</button>
       <button class="btn btn-secondary" onclick="shuffleLayout()">🔄 Mélanger</button>
       <button class="btn btn-secondary" onclick="clearCanvas()">🗑️ Vider</button>
+      <button class="btn" onclick="exportAsImage()">⬇️ Télécharger</button>
     </div>
   </div>
 
 <script>
-/* Données */
-let uploadedImages = []; // {id, src, name}
+let uploadedImages = [];
 let currentLayout = 'pinterest';
-let moodboardItems = []; // DOM nodes on canvas
 
-/* --- Upload / Drag-drop --- */
-function dragOverHandler(e){
-  e.preventDefault();
-  e.currentTarget.classList.add('dragover');
-}
-function dragLeaveHandler(e){
-  e.currentTarget.classList.remove('dragover');
-}
+function dragOverHandler(e){ e.preventDefault(); }
+function dragLeaveHandler(e){ e.preventDefault(); }
 function dropHandler(e){
   e.preventDefault();
-  e.currentTarget.classList.remove('dragover');
-  const files = Array.from(e.dataTransfer.files || []).filter(f => f.type.startsWith('image/'));
-  processFiles(files);
+  processFiles([...e.dataTransfer.files]);
 }
 function fileChangeHandler(files){
-  processFiles(Array.from(files || []));
+  processFiles([...files]);
 }
-
-/* Process files and show preview */
 function processFiles(files){
-  const maxSize = 5 * 1024 * 1024;
-  files.forEach(file => {
-    if (!file.type.startsWith('image/')) return;
-    if (file.size > maxSize) {
-      alert(file.name + " : fichier trop gros (>5MB)");
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = function(ev){
-      uploadedImages.push({
-        id: Date.now().toString(36) + Math.random().toString(36).slice(2,8),
-        src: ev.target.result,
-        name: file.name
-      });
+  files.forEach(file=>{
+    if(!file.type.startsWith("image/")) return;
+    const reader=new FileReader();
+    reader.onload=e=>{
+      uploadedImages.push({id:Date.now()+Math.random(),src:e.target.result,name:file.name});
       updatePreview();
     };
     reader.readAsDataURL(file);
   });
 }
-
-/* Update preview strip (DOM with event listeners) */
 function updatePreview(){
-  const container = document.getElementById('previewImages');
-  container.innerHTML = '';
-  uploadedImages.forEach(img => {
-    const div = document.createElement('div');
-    div.className = 'preview-item';
-    const image = document.createElement('img');
-    image.src = img.src;
-    image.alt = img.name;
+  const container=document.getElementById('previewImages');
+  container.innerHTML="";
+  uploadedImages.forEach(img=>{
+    const div=document.createElement('div');
+    div.className="preview-item";
+    div.onclick=()=>addToCanvas(img.id);
+    const image=document.createElement('img');
+    image.src=img.src;
     div.appendChild(image);
-
-    // click to add on canvas (single item)
-    div.addEventListener('click', () => addToCanvas(img.id));
-
-    const removeBtn = document.createElement('div');
-    removeBtn.className = 'remove-preview';
-    removeBtn.innerText = '×';
-    removeBtn.title = 'Retirer de la liste';
-    removeBtn.addEventListener('click', (ev) => {
-      ev.stopPropagation();
-      removeImage(img.id);
-    });
-
-    div.appendChild(removeBtn);
+    const remove=document.createElement('div');
+    remove.className="remove-preview";
+    remove.textContent="×";
+    remove.onclick=e=>{e.stopPropagation();removeImage(img.id)};
+    div.appendChild(remove);
     container.appendChild(div);
   });
 }
-
-/* remove from uploaded list */
 function removeImage(id){
-  uploadedImages = uploadedImages.filter(i => i.id !== id);
+  uploadedImages=uploadedImages.filter(i=>i.id!==id);
   updatePreview();
 }
-
-/* --- Layout selection --- */
-function selectLayout(el, layout){
-  currentLayout = layout;
-  document.querySelectorAll('.layout-btn').forEach(b => b.classList.remove('active'));
+function selectLayout(el,layout){
+  currentLayout=layout;
+  document.querySelectorAll('.layout-btn').forEach(b=>b.classList.remove('active'));
   el.classList.add('active');
 }
-
-/* --- Create positions for layouts --- */
-function generateLayout(imageCount, width, height){
-  const positions = [];
-  const margin = 12;
-
-  switch(currentLayout){
-    case 'grid': {
-      const cols = Math.ceil(Math.sqrt(imageCount));
-      const itemWidth = (width - margin*(cols+1)) / cols;
-      const itemHeight = itemWidth * 0.75;
-      for(let i=0;i<imageCount;i++){
-        const row = Math.floor(i/cols);
-        const col = i%cols;
-        positions.push({
-          x: margin + col * (itemWidth + margin),
-          y: margin + row * (itemHeight + margin),
-          width: Math.max(80, itemWidth),
-          height: Math.max(60, itemHeight)
-        });
-      }
-      break;
+function generateMoodboard(){
+  if(uploadedImages.length===0){
+    alert("Veuillez d'abord ajouter des images !");
+    return;
+  }
+  const canvas=document.getElementById('moodboardCanvas');
+  const width=canvas.clientWidth, height=canvas.clientHeight;
+  canvas.innerHTML="";
+  const positions=generateLayout(uploadedImages.length,width,height);
+  uploadedImages.forEach((img,i)=>{
+    const pos=positions[i];
+    const item=document.createElement('div');
+    item.className="image-item";
+    item.style.left=pos.x+"px";
+    item.style.top=pos.y+"px";
+    item.style.width=pos.width+"px";
+    item.style.height=pos.height+"px";
+    const image=document.createElement('img');
+    image.src=img.src;
+    item.appendChild(image);
+    const ctrl=document.createElement('div');
+    ctrl.className="image-controls";
+    ctrl.textContent="×";
+    ctrl.onclick=(e)=>{e.stopPropagation();item.remove()};
+    item.appendChild(ctrl);
+    canvas.appendChild(item);
+  });
+}
+function generateLayout(count,w,h){
+  const positions=[];
+  const margin=10;
+  if(currentLayout==='grid'){
+    const cols=Math.ceil(Math.sqrt(count));
+    const itemW=(w-(cols+1)*margin)/cols;
+    const itemH=itemW*0.75;
+    for(let i=0;i<count;i++){
+      const row=Math.floor(i/cols),col=i%cols;
+      positions.push({x:margin+col*(itemW+margin),y:margin+row*(itemH+margin),width:itemW,height:itemH});
     }
-
-    case 'pinterest': {
-      const pCols = Math.min(3, Math.max(1, Math.floor(width / 160)));
-      const pItemWidth = (width - margin*(pCols+1)) / pCols;
-      const colHeights = new Array(pCols).fill(margin);
-      for(let i=0;i<imageCount;i++){
-        const shortestCol = colHeights.indexOf(Math.min(...colHeights));
-        const randomHeight = Math.max(90, pItemWidth * (0.6 + Math.random()*0.8));
-        positions.push({
-          x: margin + shortestCol*(pItemWidth + margin),
-          y: colHeights[shortestCol],
-          width: pItemWidth,
-          height: randomHeight
-        });
-        colHeights[shortestCol] += randomHeight + margin;
-      }
-      break;
+  }else if(currentLayout==='pinterest'){
+    const cols=3;
+    const colW=(w-(cols+1)*margin)/cols;
+    const colHeights=new Array(cols).fill(margin);
+    for(let i=0;i<count;i++){
+      const col=colHeights.indexOf(Math.min(...colHeights));
+      const hImg=120+Math.random()*80;
+      positions.push({x:margin+col*(colW+margin),y:colHeights[col],width:colW,height:hImg});
+      colHeights[col]+=hImg+margin;
     }
-
-    case 'collage': {
-      const placed = [];
-      for(let i=0;i<imageCount;i++){
-        const size = 90 + Math.random()*160;
-        let attempts = 0;
-        let pos;
-        do {
-          pos = {
-            x: Math.random() * (width - size - 40) + 20,
-            y: Math.random() * (height - size - 40) + 20,
-            width: size,
-            height: size * (0.65 + Math.random()*0.6),
-            rotation: (Math.random()-0.5)*18
-          };
-          attempts++;
-        } while(attempts < 80 && overlaps(pos, placed));
-        placed.push(pos);
-        positions.push(pos);
-      }
-      break;
+  }else if(currentLayout==='collage'){
+    for(let i=0;i<count;i++){
+      const size=100+Math.random()*100;
+      positions.push({x:Math.random()*(w-size),y:Math.random()*(h-size),width:size,height:size*0.7});
     }
-
-    case 'minimal': {
-      const mItemWidth = Math.min(200, (width - 80) / 2);
-      const spacing = 40;
-      const count = Math.min(imageCount, 6);
-      for(let i=0;i<count;i++){
-        const row = Math.floor(i/2), col = i%2;
-        positions.push({
-          x: (width - mItemWidth*2 - spacing)/2 + col*(mItemWidth + spacing),
-          y: 30 + row*(mItemWidth*0.9 + spacing),
-          width: mItemWidth,
-          height: mItemWidth*0.85
-        });
-      }
-      break;
+  }else if(currentLayout==='minimal'){
+    const itemW=Math.min(200,(w-60)/2);
+    for(let i=0;i<Math.min(count,6);i++){
+      const row=Math.floor(i/2),col=i%2;
+      positions.push({x:20+col*(itemW+20),y:20+row*(itemW*0.7+20),width:itemW,height:itemW*0.7});
     }
   }
   return positions;
 }
-
-function overlaps(a, list){
-  const margin = 10;
-  for(const b of list){
-    if (a.x < b.x + b.width + margin &&
-        a.x + a.width + margin > b.x &&
-        a.y < b.y + b.height + margin &&
-        a.y + a.height + margin > b.y) return true;
-  }
-  return false;
-}
-
-/* --- Create and render moodboard --- */
-function generateMoodboard(){
-  if (uploadedImages.length === 0){
-    alert("Veuillez d'abord ajouter des images !");
-    return;
-  }
-  const canvas = document.getElementById('moodboardCanvas');
-  const canvasWidth = canvas.clientWidth;
-  const canvasHeight = canvas.clientHeight;
-
-  // remove placeholder
-  const ph = document.getElementById('canvasPlaceholder');
-  if (ph) ph.style.display = 'none';
-
-  // clear existing
-  canvas.innerHTML = '';
-  moodboardItems = [];
-
-  const positions = generateLayout(uploadedImages.length, canvasWidth, canvasHeight);
-
-  uploadedImages.forEach((img, idx) => {
-    const pos = positions[idx] || { x: 10 + idx*10, y: 10 + idx*10, width: 120, height: 90 };
-    const node = createMoodboardItem(img, pos);
-    canvas.appendChild(node);
-    moodboardItems.push(node);
-  });
-}
-
-/* Create DOM node for an image on canvas */
-function createMoodboardItem(imgData, pos){
-  const item = document.createElement('div');
-  item.className = 'image-item';
-  item.style.left = (pos.x|0) + 'px';
-  item.style.top = (pos.y|0) + 'px';
-  item.style.width = (pos.width|0) + 'px';
-  item.style.height = (pos.height|0) + 'px';
-  if (pos.rotation) item.style.transform = `rotate(${pos.rotation}deg)`;
-
-  item.dataset.id = imgData.id;
-
-  const image = document.createElement('img');
-  image.src = imgData.src;
-  image.alt = imgData.name || '';
-  item.appendChild(image);
-
-  const ctrl = document.createElement('div');
-  ctrl.className = 'image-controls';
-  ctrl.innerText = '×';
-  ctrl.title = 'Retirer de la planche';
-  ctrl.addEventListener('click', (e) => {
-    e.stopPropagation();
-    removeFromCanvas(imgData.id);
-  });
-  item.appendChild(ctrl);
-
-  // Optional: allow drag to reposition (basic)
-  enableDragForItem(item);
-
-  return item;
-}
-
-/* remove node by id */
-function removeFromCanvas(id){
-  const canvas = document.getElementById('moodboardCanvas');
-  const node = canvas.querySelector(`[data-id="${id}"]`);
-  if (node) node.remove();
-  moodboardItems = moodboardItems.filter(n => n.dataset.id !== id);
-}
-
-/* add single preview image to canvas at center */
-function addToCanvas(id){
-  const img = uploadedImages.find(i=>i.id===id);
-  if (!img) return;
-  const canvas = document.getElementById('moodboardCanvas');
-  const w = Math.min(160, Math.max(80, canvas.clientWidth * 0.25));
-  const h = w * 0.75;
-  const pos = {
-    x: Math.max(10, (canvas.clientWidth - w)/2 + (Math.random()-0.5)*40),
-    y: Math.max(10, (canvas.clientHeight - h)/2 + (Math.random()-0.5)*40),
-    width: w, height: h
-  };
-  const node = createMoodboardItem(img, pos);
-  canvas.appendChild(node);
-  moodboardItems.push(node);
-}
-
-/* shuffle — regenerate layout (uses randomness inside layouts) */
-function shuffleLayout(){
-  if (uploadedImages.length === 0) return;
-  generateMoodboard();
-}
-
-/* clear canvas */
+function shuffleLayout(){ generateMoodboard(); }
 function clearCanvas(){
-  const canvas = document.getElementById('moodboardCanvas');
-  canvas.innerHTML = '<div id="canvasPlaceholder" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#a0aec0">Votre mood board apparaîtra ici</div>';
-  moodboardItems = [];
+  document.getElementById('moodboardCanvas').innerHTML=
+    '<div id="canvasPlaceholder" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#a0aec0">Votre mood board apparaîtra ici</div>';
 }
-
-/* --- Small drag-to-move implementation (keeps to simple UX) --- */
-function enableDragForItem(node){
-  let offsetX=0, offsetY=0, dragging=false, startX=0, startY=0;
-  node.addEventListener('pointerdown', (e)=>{
-    dragging = true;
-    startX = e.clientX; startY = e.clientY;
-    offsetX = parseInt(node.style.left || 0,10);
-    offsetY = parseInt(node.style.top || 0,10);
-    node.setPointerCapture(e.pointerId);
-    node.style.cursor = 'grabbing';
-  });
-  node.addEventListener('pointermove', (e)=>{
-    if (!dragging) return;
-    const dx = e.clientX - startX;
-    const dy = e.clientY - startY;
-    node.style.left = (offsetX + dx) + 'px';
-    node.style.top = (offsetY + dy) + 'px';
-  });
-  node.addEventListener('pointerup', (e)=>{
-    dragging = false;
-    try { node.releasePointerCapture(e.pointerId); } catch(e) {}
-    node.style.cursor = 'grab';
-  });
-  node.addEventListener('pointercancel', ()=>{ dragging=false; node.style.cursor='grab' });
+function addToCanvas(id){
+  const img=uploadedImages.find(i=>i.id===id);
+  if(!img) return;
+  const canvas=document.getElementById('moodboardCanvas');
+  const w=120,h=90;
+  const item=document.createElement('div');
+  item.className="image-item";
+  item.style.left=(canvas.clientWidth/2-w/2)+"px";
+  item.style.top=(canvas.clientHeight/2-h/2)+"px";
+  item.style.width=w+"px";
+  item.style.height=h+"px";
+  const image=document.createElement('img');
+  image.src=img.src;
+  item.appendChild(image);
+  const ctrl=document.createElement('div');
+  ctrl.className="image-controls";
+  ctrl.textContent="×";
+  ctrl.onclick=()=>item.remove();
+  item.appendChild(ctrl);
+  canvas.appendChild(item);
 }
-
-/* --- Icon import logic: remplace la source d'une icône par un SVG local --- */
-function handleIconUpload(ev, targetId){
-  const f = ev.target.files && ev.target.files[0];
-  if (!f) return;
-  if (!f.type.includes('svg') && !f.name.endsWith('.svg')) {
-    // on accepte aussi png/jpg si besoin
-    const allowed = confirm("Fichier non-SVG. Voulez-vous l'utiliser quand même ?");
-    if (!allowed) return;
-  }
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    // targetId peut être 'icon-pinterest' or 'icon-upload' etc.
-    // si targetId == 'icon-upload' nous n'avons pas d'element d'upload visuel dans ce template,
-    // on se contente de remplacer les autres icônes.
-    const el = document.getElementById(targetId.replace('icon-','icon-')) || document.getElementById(targetId);
-    // on accepte les id standards:
-    const map = {
-      'icon-pinterest':'icon-pinterest',
-      'icon-grid':'icon-grid',
-      'icon-collage':'icon-collage',
-      'icon-minimal':'icon-minimal',
-      'icon-upload':''
-    };
-    const target = document.getElementById(targetId) || document.getElementById('icon-'+targetId);
-    // fallback: essayer d'affecter à l'id donné ou à une correspondance
-    let tgt = document.getElementById(targetId) || document.getElementById('icon-'+targetId);
-    if (!tgt) {
-      // essayer les ids connus :
-      tgt = document.getElementById('icon-pinterest') || document.getElementById('icon-grid') || document.getElementById('icon-collage') || document.getElementById('icon-minimal');
-    }
-    if (tgt) tgt.src = e.target.result;
-  };
-  reader.readAsDataURL(f);
+function exportAsImage(){
+  const canvas=document.getElementById('moodboardCanvas');
+  html2canvas(canvas).then(c=>{
+    const link=document.createElement('a');
+    link.download='moodboard.png';
+    link.href=c.toDataURL();
+    link.click();
+  });
 }
-
-/* Initialise des icônes par défaut (si tu veux remplacer, utilises les boutons d'import) */
-(function initDefaultIcons(){
-  // tu peux remplacer ces dataURI par tes propres SVG inline ou laisser vide et importer
-  const defaultSVG = (label) => {
-    // simple placeholder SVG (monochrome) encoded as dataURI
-    const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 24 24' fill='none' stroke='%23667eea' stroke-width='1.8'><rect x='3' y='3' width='18' height='18' rx='3'/><text x='50%' y='55%' text-anchor='middle' font-size='8' fill='%23667eea'>${label}</text></svg>`;
-    return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
-  };
-  document.getElementById('icon-pinterest').src = defaultSVG('P');
-  document.getElementById('icon-grid').src      = defaultSVG('G');
-  document.getElementById('icon-collage').src   = defaultSVG('C');
-  document.getElementById('icon-minimal').src   = defaultSVG('M');
-})();
-
 </script>
 </body>
 </html>
