@@ -7,7 +7,7 @@
 <style>
   body {
     font-family: sans-serif;
-    background: #7f5af0;
+    background: #f5f5f5; /* Fond neutre */
     margin: 0;
     padding: 20px;
     display: flex;
@@ -51,7 +51,8 @@
   .preview-item img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain; /* Image entière */
+    background: #f5f5f5;
   }
   .remove-preview {
     position: absolute;
@@ -89,9 +90,9 @@
     font-size: 0.9rem;
   }
   .layout-btn.active {
-    background: #7f5af0;
-    border-color: #7f5af0;
-    color: white;
+    background: #E0EBDB;
+    border-color: #E0EBDB;
+    color: black;
   }
   .moodboard-canvas {
     background: #f8fafc;
@@ -106,18 +107,20 @@
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+    background: #fff;
   }
   .image-item img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain; /* Image entière */
+    background: #f5f5f5;
   }
   .image-controls {
     position: absolute;
     top: -8px;
     right: -8px;
-    background: #7f5af0;
-    color: #fff;
+    background: #E0EBDB;
+    color: #000;
     width: 22px;
     height: 22px;
     border-radius: 50%;
@@ -140,14 +143,22 @@
   .btn {
     padding: 10px 16px;
     border-radius: 8px;
-    background: #7f5af0;
-    color: #fff;
+    background: #E0EBDB; /* Nouvelle couleur */
+    color: #000;
     border: none;
     cursor: pointer;
     font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn img {
+    width: 18px;
+    height: 18px;
   }
   .btn-secondary {
     background: #718096;
+    color: #fff;
   }
 </style>
 </head>
@@ -183,10 +194,18 @@
 
     <!-- Actions -->
     <div class="actions">
-      <button class="btn" onclick="generateMoodboard()">✨ Générer</button>
-      <button class="btn btn-secondary" onclick="shuffleLayout()">🔄 Mélanger</button>
-      <button class="btn btn-secondary" onclick="clearCanvas()">🗑️ Vider</button>
-      <button class="btn" onclick="exportAsImage()">⬇️ Télécharger</button>
+      <button class="btn" data-icon="https://img.icons8.com/ios/50/sparkle.png" onclick="generateMoodboard()">
+        <img src="https://img.icons8.com/ios/50/sparkle.png" alt=""> Générer
+      </button>
+      <button class="btn btn-secondary" data-icon="https://img.icons8.com/ios/50/shuffle.png" onclick="shuffleLayout()">
+        <img src="https://img.icons8.com/ios/50/shuffle.png" alt=""> Mélanger
+      </button>
+      <button class="btn btn-secondary" data-icon="https://img.icons8.com/ios/50/trash.png" onclick="clearCanvas()">
+        <img src="https://img.icons8.com/ios/50/trash.png" alt=""> Vider
+      </button>
+      <button class="btn" data-icon="https://img.icons8.com/ios/50/download.png" onclick="exportAsImage()">
+        <img src="https://img.icons8.com/ios/50/download.png" alt=""> Télécharger
+      </button>
     </div>
   </div>
 
