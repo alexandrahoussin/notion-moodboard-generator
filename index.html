@@ -11,6 +11,9 @@
       padding: 20px;
       background: #f8f9fa;
       color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     h1 {
@@ -18,6 +21,7 @@
       align-items: center;
       gap: 10px;
       font-size: 1.8em;
+      margin-bottom: 20px;
     }
 
     .upload-area {
@@ -28,6 +32,8 @@
       margin-bottom: 20px;
       border-radius: 8px;
       background: white;
+      width: 100%;
+      max-width: 900px;
     }
 
     #preview {
@@ -35,6 +41,7 @@
       gap: 10px;
       margin-bottom: 20px;
       flex-wrap: wrap;
+      max-width: 900px;
     }
 
     #preview img {
@@ -67,6 +74,8 @@
 
     .controls {
       margin-bottom: 20px;
+      width: 100%;
+      max-width: 900px;
     }
 
     .layout-selector {
@@ -99,7 +108,7 @@
     .canvas {
       width: 100%;
       max-width: 900px;
-      height: 500px;
+      height: 600px;
       margin: 0 auto 20px;
       border-radius: 8px;
       background: #f1f5f9;
@@ -109,7 +118,6 @@
 
     .image-item {
       position: absolute;
-      object-fit: contain;
       border-radius: 0;
       box-shadow: none;
     }
@@ -126,6 +134,7 @@
       display: flex;
       justify-content: center;
       gap: 10px;
+      margin-bottom: 40px;
     }
 
     .actions button {
@@ -287,7 +296,7 @@
       if (currentLayout === "collage") {
         let n = uploadedImages.length;
         let baseSize = Math.min(w, h) / Math.sqrt(n);
-        baseSize = Math.max(150, Math.min(baseSize, 250));
+        baseSize = Math.max(180, Math.min(baseSize, 280));
 
         let placed = [];
         uploadedImages.forEach((src) => {
@@ -316,7 +325,70 @@
           canvas.appendChild(img);
         });
       }
-      // autres layouts (pinterest, grid, minimal) restent inchangés...
+      else if (currentLayout === "pinterest") {
+        let colCount = 3;
+        let colWidth = w / colCount;
+        let colHeights = Array(colCount).fill(0);
+
+        uploadedImages.forEach((src) => {
+          let img = document.createElement("div");
+          img.className = "image-item";
+          let col = colHeights.indexOf(Math.min(...colHeights));
+          let x = col * colWidth;
+          let y = colHeights[col];
+          let height = 200 + Math.random() * 100;
+
+          img.style.width = colWidth - 10 + "px";
+          img.style.height = height + "px";
+          img.style.left = x + "px";
+          img.style.top = y + "px";
+
+          img.innerHTML = `<img src="${src}">`;
+          canvas.appendChild(img);
+          colHeights[col] += height + 10;
+        });
+      }
+      else if (currentLayout === "grid") {
+        let cols = Math.ceil(Math.sqrt(uploadedImages.length));
+        let rows = Math.ceil(uploadedImages.length / cols);
+        let cellW = w / cols;
+        let cellH = h / rows;
+
+        uploadedImages.forEach((src, i) => {
+          let img = document.createElement("div");
+          img.className = "image-item";
+
+          let col = i % cols;
+          let row = Math.floor(i / cols);
+          img.style.width = cellW + "px";
+          img.style.height = cellH + "px";
+          img.style.left = col * cellW + "px";
+          img.style.top = row * cellH + "px";
+
+          img.innerHTML = `<img src="${src}">`;
+          canvas.appendChild(img);
+        });
+      }
+      else if (currentLayout === "minimal") {
+        let margin = 20;
+        let size = Math.min(w, h) / 3;
+
+        uploadedImages.forEach((src, i) => {
+          let img = document.createElement("div");
+          img.className = "image-item";
+
+          let x = margin + (i % 2) * (size + margin);
+          let y = margin + Math.floor(i / 2) * (size + margin);
+
+          img.style.width = size + "px";
+          img.style.height = size + "px";
+          img.style.left = x + "px";
+          img.style.top = y + "px";
+
+          img.innerHTML = `<img src="${src}">`;
+          canvas.appendChild(img);
+        });
+      }
     }
 
     function shuffleImages() {
