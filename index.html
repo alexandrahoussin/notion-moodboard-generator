@@ -7,7 +7,7 @@
 <style>
   body {
     font-family: sans-serif;
-    background: transparent; /* ✅ Fond transparent pour Notion */
+    background: transparent;
     margin: 0;
     padding: 10px;
     display: flex;
@@ -19,7 +19,6 @@
     padding: 16px;
     max-width: 900px;
     width: 100%;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   }
   h1 {
     text-align: center;
@@ -43,10 +42,7 @@
     position: relative;
     min-width: 70px;
     height: 55px;
-    border-radius: 6px;
     overflow: hidden;
-    border: 2px solid transparent;
-    cursor: pointer;
   }
   .preview-item img {
     width: 100%;
@@ -116,33 +112,15 @@
   }
   .image-item {
     position: absolute;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 6px 14px rgba(0,0,0,0.12);
   }
   .image-item img {
     width: 100%;
     height: 100%;
     object-fit: contain;
+    display: block;
   }
   .image-controls {
-    position: absolute;
-    top: -6px;
-    right: -6px;
-    background: #E0EBDB;
-    color: #000;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    cursor: pointer;
-    opacity: 0;
-  }
-  .image-item:hover .image-controls {
-    opacity: 1;
+    display: none; /* ❌ plus de bouton sur les images */
   }
   .actions {
     display: flex;
@@ -194,7 +172,7 @@
         <div class="layout-btn active" onclick="selectLayout(this,'pinterest')">
           <div class="layout-preview">
             <!-- Aperçu Pinterest -->
-            <svg width="40" height="30" viewBox="0 0 40 30" xmlns="http://www.w3.org/2000/svg">
+            <svg width="40" height="30" xmlns="http://www.w3.org/2000/svg">
               <rect x="1" y="1" width="11" height="15" fill="currentColor" opacity="0.7"/>
               <rect x="14" y="1" width="11" height="10" fill="currentColor" opacity="0.7"/>
               <rect x="27" y="1" width="11" height="18" fill="currentColor" opacity="0.7"/>
@@ -206,7 +184,7 @@
         <div class="layout-btn" onclick="selectLayout(this,'grid')">
           <div class="layout-preview">
             <!-- Aperçu Grille -->
-            <svg width="40" height="30" viewBox="0 0 40 30" xmlns="http://www.w3.org/2000/svg">
+            <svg width="40" height="30" xmlns="http://www.w3.org/2000/svg">
               <rect x="2" y="2" width="10" height="8" fill="currentColor" opacity="0.7"/>
               <rect x="15" y="2" width="10" height="8" fill="currentColor" opacity="0.7"/>
               <rect x="28" y="2" width="10" height="8" fill="currentColor" opacity="0.7"/>
@@ -220,7 +198,7 @@
         <div class="layout-btn" onclick="selectLayout(this,'collage')">
           <div class="layout-preview">
             <!-- Aperçu Collage -->
-            <svg width="40" height="30" viewBox="0 0 40 30" xmlns="http://www.w3.org/2000/svg">
+            <svg width="40" height="30" xmlns="http://www.w3.org/2000/svg">
               <rect x="3" y="4" width="12" height="9" fill="currentColor" opacity="0.7" transform="rotate(-5 9 8.5)"/>
               <rect x="18" y="2" width="8" height="12" fill="currentColor" opacity="0.7" transform="rotate(8 22 8)"/>
               <rect x="28" y="8" width="10" height="7" fill="currentColor" opacity="0.7" transform="rotate(-3 33 11.5)"/>
@@ -232,7 +210,7 @@
         <div class="layout-btn" onclick="selectLayout(this,'minimal')">
           <div class="layout-preview">
             <!-- Aperçu Minimal -->
-            <svg width="40" height="30" viewBox="0 0 40 30" xmlns="http://www.w3.org/2000/svg">
+            <svg width="40" height="30" xmlns="http://www.w3.org/2000/svg">
               <rect x="8" y="6" width="8" height="6" fill="currentColor" opacity="0.7"/>
               <rect x="24" y="6" width="8" height="6" fill="currentColor" opacity="0.7"/>
               <rect x="8" y="18" width="8" height="6" fill="currentColor" opacity="0.7"/>
@@ -272,130 +250,114 @@
 let uploadedImages = [];
 let currentLayout = 'pinterest';
 
-function dragOverHandler(ev) {
-  ev.preventDefault();
-  ev.currentTarget.style.background = "#e6fffa";
-}
-function dragLeaveHandler(ev) {
-  ev.preventDefault();
-  ev.currentTarget.style.background = "";
-}
-function dropHandler(ev) {
-  ev.preventDefault();
-  ev.currentTarget.style.background = "";
-  if (ev.dataTransfer.files) fileChangeHandler(ev.dataTransfer.files);
-}
-function fileChangeHandler(files) {
-  for (let f of files) {
-    if (!f.type.startsWith("image/")) continue;
-    let reader = new FileReader();
-    reader.onload = e => {
-      uploadedImages.push(e.target.result);
-      updatePreview();
-    };
+function dragOverHandler(ev){ev.preventDefault();}
+function dragLeaveHandler(ev){ev.preventDefault();}
+function dropHandler(ev){ev.preventDefault(); if(ev.dataTransfer.files) fileChangeHandler(ev.dataTransfer.files);}
+function fileChangeHandler(files){
+  for(let f of files){
+    if(!f.type.startsWith("image/")) continue;
+    let reader=new FileReader();
+    reader.onload=e=>{uploadedImages.push(e.target.result);updatePreview();};
     reader.readAsDataURL(f);
   }
 }
-function updatePreview() {
-  let preview = document.getElementById("previewImages");
-  preview.innerHTML = "";
-  uploadedImages.forEach((src, idx) => {
-    let div = document.createElement("div");
-    div.className = "preview-item";
-    div.innerHTML = `<img src="${src}"><div class="remove-preview" onclick="removeImage(${idx})">×</div>`;
+function updatePreview(){
+  let preview=document.getElementById("previewImages");
+  preview.innerHTML="";
+  uploadedImages.forEach((src,idx)=>{
+    let div=document.createElement("div");
+    div.className="preview-item";
+    div.innerHTML=`<img src="${src}"><div class="remove-preview" onclick="removeImage(${idx})">×</div>`;
     preview.appendChild(div);
   });
 }
-function removeImage(i) {
-  uploadedImages.splice(i,1);
-  updatePreview();
-  generateMoodboard();
-}
-function selectLayout(el, layout) {
-  currentLayout = layout;
-  document.querySelectorAll('.layout-btn').forEach(btn => btn.classList.remove('active'));
+function removeImage(i){uploadedImages.splice(i,1);updatePreview();generateMoodboard();}
+function selectLayout(el,layout){
+  currentLayout=layout;
+  document.querySelectorAll('.layout-btn').forEach(btn=>btn.classList.remove('active'));
   el.classList.add('active');
   generateMoodboard();
 }
-function clearCanvas() {
-  uploadedImages = [];
+function clearCanvas(){
+  uploadedImages=[];
   updatePreview();
-  document.getElementById("moodboardCanvas").innerHTML =
-    `<div id="canvasPlaceholder" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#a0aec0">Votre mood board apparaîtra ici</div>`;
+  document.getElementById("moodboardCanvas").innerHTML=`<div id="canvasPlaceholder" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#a0aec0">Votre mood board apparaîtra ici</div>`;
 }
-function shuffleLayout() {
-  uploadedImages.sort(() => Math.random()-0.5);
-  generateMoodboard();
-}
-function generateMoodboard() {
-  let canvas = document.getElementById("moodboardCanvas");
-  canvas.innerHTML = "";
-  if (!uploadedImages.length) {
-    canvas.innerHTML = `<div id="canvasPlaceholder" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#a0aec0">Veuillez d'abord ajouter des images</div>`;
+function shuffleLayout(){uploadedImages.sort(()=>Math.random()-0.5);generateMoodboard();}
+
+function generateMoodboard(){
+  let canvas=document.getElementById("moodboardCanvas");
+  canvas.innerHTML="";
+  if(!uploadedImages.length){
+    canvas.innerHTML=`<div id="canvasPlaceholder" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#a0aec0">Veuillez d'abord ajouter des images</div>`;
     return;
   }
-  let w = canvas.clientWidth, h = canvas.clientHeight;
-  if (currentLayout === "grid" || currentLayout === "minimal") {
-    let cols = 3, rows = Math.ceil(uploadedImages.length/cols);
-    let cellW = w/cols, cellH = h/rows;
-    uploadedImages.forEach((src, i) => {
-      let img = document.createElement("div");
-      img.className = "image-item";
-      img.style.left = (i%cols)*cellW+"px";
-      img.style.top = Math.floor(i/cols)*cellH+"px";
-      img.style.width = cellW+"px";
-      img.style.height = cellH+"px";
-      img.innerHTML = `<img src="${src}"><div class="image-controls" onclick="removeImage(${i})">×</div>`;
+  let w=canvas.clientWidth,h=canvas.clientHeight;
+
+  if(currentLayout==="collage"){
+    let gridSize=5;
+    let cellW=w/gridSize,cellH=h/gridSize;
+    let used=[];
+    uploadedImages.forEach((src,i)=>{
+      let cell;
+      do{
+        let cx=Math.floor(Math.random()*gridSize);
+        let cy=Math.floor(Math.random()*gridSize);
+        cell={x:cx,y:cy};
+      }while(used.some(c=>c.x===cell.x && c.y===cell.y));
+      used.push(cell);
+      let x=cell.x*cellW+10, y=cell.y*cellH+10;
+      let size=Math.min(cellW,cellH)-20;
+      let img=document.createElement("div");
+      img.className="image-item";
+      img.style.width=size+"px";
+      img.style.height=size+"px";
+      img.style.left=x+"px";
+      img.style.top=y+"px";
+      img.style.transform=`rotate(${Math.random()*10-5}deg)`;
+      img.innerHTML=`<img src="${src}">`;
       canvas.appendChild(img);
     });
-  } else if (currentLayout === "pinterest") {
-    let colCount = 4;
-    let colWidth = w/colCount;
-    let colHeights = new Array(colCount).fill(0);
-    uploadedImages.forEach((src,i) => {
-      let col = colHeights.indexOf(Math.min(...colHeights));
-      let x = col*colWidth, y = colHeights[col];
-      let imgH = 150+Math.random()*100;
-      let img = document.createElement("div");
-      img.className = "image-item";
-      img.style.left = x+"px";
-      img.style.top = y+"px";
-      img.style.width = colWidth+"px";
-      img.style.height = imgH+"px";
-      img.innerHTML = `<img src="${src}"><div class="image-controls" onclick="removeImage(${i})">×</div>`;
+  }
+  else if(currentLayout==="grid" || currentLayout==="minimal"){
+    let cols=3,rows=Math.ceil(uploadedImages.length/cols);
+    let cellW=w/cols,cellH=h/rows;
+    uploadedImages.forEach((src,i)=>{
+      let img=document.createElement("div");
+      img.className="image-item";
+      img.style.left=(i%cols)*cellW+"px";
+      img.style.top=Math.floor(i/cols)*cellH+"px";
+      img.style.width=cellW+"px";
+      img.style.height=cellH+"px";
+      img.innerHTML=`<img src="${src}">`;
+      canvas.appendChild(img);
+    });
+  }
+  else if(currentLayout==="pinterest"){
+    let colCount=4,colWidth=w/colCount;
+    let colHeights=new Array(colCount).fill(0);
+    uploadedImages.forEach((src,i)=>{
+      let col=colHeights.indexOf(Math.min(...colHeights));
+      let x=col*colWidth, y=colHeights[col];
+      let imgH=150+Math.random()*100;
+      let img=document.createElement("div");
+      img.className="image-item";
+      img.style.left=x+"px";
+      img.style.top=y+"px";
+      img.style.width=colWidth+"px";
+      img.style.height=imgH+"px";
+      img.innerHTML=`<img src="${src}">`;
       canvas.appendChild(img);
       colHeights[col]+=imgH+10;
     });
-  } else if (currentLayout === "collage") {
-    let placed = [];
-    uploadedImages.forEach((src,i) => {
-      let img = document.createElement("div");
-      img.className = "image-item";
-      let size = 120+Math.random()*150;
-      let tries = 0, x, y, overlap;
-      do {
-        x = Math.random()*(w-size);
-        y = Math.random()*(h-size);
-        overlap = placed.some(p => !(x+size+20<p.x || p.x+p.w+20<x || y+size+20<p.y || p.y+p.h+20<y));
-        tries++;
-      } while(overlap && tries<100);
-      placed.push({x,y,w:size,h:size});
-      img.style.width = size+"px";
-      img.style.height = size+"px";
-      img.style.left = x+"px";
-      img.style.top = y+"px";
-      img.style.transform = `rotate(${Math.random()*20-10}deg)`;
-      img.innerHTML = `<img src="${src}"><div class="image-controls" onclick="removeImage(${i})">×</div>`;
-      canvas.appendChild(img);
-    });
   }
 }
-function exportAsImage() {
-  let canvas = document.getElementById("moodboardCanvas");
-  html2canvas(canvas).then(c => {
-    let link = document.createElement("a");
-    link.download = "moodboard.png";
-    link.href = c.toDataURL();
+function exportAsImage(){
+  let canvas=document.getElementById("moodboardCanvas");
+  html2canvas(canvas).then(c=>{
+    let link=document.createElement("a");
+    link.download="moodboard.png";
+    link.href=c.toDataURL();
     link.click();
   });
 }
